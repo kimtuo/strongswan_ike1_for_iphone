@@ -1,0 +1,48 @@
+root@ubuntu:~/cer# cat /etc/ipsec.conf 
+# ipsec.conf - strongSwan IPsec configuration file
+
+# basic configuration
+
+
+config setup
+    uniqueids=never 
+conn iOS_cert
+    aggressive=yes
+    keyexchange=ikev1
+    fragmentation=yes
+    left=%defaultroute
+    leftauth=psk
+    leftsubnet=0.0.0.0/0
+    right=%any
+    rightauth=psk
+    rightauth2=xauth
+    rightsourceip=10.10.10.0/24
+    auto=add
+
+root@ubuntu:~/cer# cat /etc/ipsec.secrets 
+# This file holds shared secrets or RSA private keys for authentication.
+
+# RSA private key for this host, authenticating it to any other host
+# which knows the public part.
+: PSK "yuantong"
+: XAUTH "group1"
+kim %any% : EAP "thinker"
+root@ubuntu:~/cer# cat /etc/strongswan.conf 
+# strongswan.conf - strongSwan configuration file
+#
+# Refer to the strongswan.conf(5) manpage for details
+#
+# Configuration changes should be made in the included files
+
+charon {
+	i_dont_care_about_security_and_use_aggressive_mode_psk = yes
+	load_modular = yes
+	dns1 = 8.8.8.8
+	dns2 = 8.8.4.4
+	plugins {
+		include strongswan.d/charon/*.conf
+	}
+}
+
+include strongswan.d/*.conf
+root@ubuntu:~/cer# 
